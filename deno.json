@@ -1,0 +1,9 @@
+{
+  "tasks": {
+    "dev": "deno run --watch src/main.ts"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.2"
+  },
+  "importMap": "./vendor/import_map.json"
+}
