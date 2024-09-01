@@ -16,6 +16,7 @@
               version = "1";
               src = ./.;
               buildCommand = ''
+                mkdir -p $out
                 cp -r $src/create_deno_nix_lockfile.js .
                 cp -r $src/deno.lock .
                 deno run -A create_deno_nix_lockfile.js > $out/deno.nix
