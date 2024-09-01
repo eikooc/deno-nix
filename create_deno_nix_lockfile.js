@@ -26,7 +26,7 @@ const lockNix = Object.values(specifiers).map((specifier) => {
     const jsrKey = specifier.split(":")[1];
     const a = packages.jsr[jsrKey];
 
-    const version = a["version"];
+    const version = jsrKey.split("@")[2];
     const integrity = a["integrity"];
 
     const url = `https://esm.sh/jsr/${jsrKey}`;
