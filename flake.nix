@@ -23,19 +23,27 @@
               '';
               nativeBuildInputs = with pkgs; [ deno ];
             };
-            # cached = pkgs.stdenv.mkDerivation rec {
-            #   pname = "cached";
+            cached =
+              let
+                fetchedDeps = map
+                  (x: pkgs.fetchurl {
+                    url = x.url;
+                    hash = x.sha256;
+                    rev = x.rev;
+                  })
+                  hashedDeps;
+              in
+              pkgs.stdenv.mkDerivation rec {
+                pname = "cached";
+                version = "1";
 
-            #   src = pkgs.fetchurl {
-            #     inherit url sha256;
-            #     name = pkgs.sanitizeDerivationName (pkgs.baseNameOf url);
-            #   };
+                src = fetchedDeps;
 
-            #   installPhase = ''
-            #     ls .
-            #     cp -r . $out
-            #   '';
-            # };
+                installPhase = ''
+                  cp -r . $out
+                '';
+                nativeBuildInputs = with pkgs; [ hashedDeps ];
+              };
             denort = pkgs.stdenv.mkDerivation rec {
               pname = "denort";
               version = "1.45.5";
@@ -59,10 +67,15 @@
               cp -r $src/* .
               export DENORT_BIN="$(which denort)"
               export DENO_DIR=".deno"
-              ls 
+
               deno compile --cached-only --no-remote -o $out/hello ./src/main.ts
+              
+              # For testing
+              # mkdir -p $out
+              # touch $out/hello
+              # cp -r ${cached} $out/has
             '';
-            nativeBuildInputs = with pkgs; [ deno denort which hashedDeps ];
+            nativeBuildInputs = with pkgs; [ deno denort which cached ];
           };
 
         devShells.default = pkgs.mkShell {
